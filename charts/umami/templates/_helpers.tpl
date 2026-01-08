@@ -70,9 +70,10 @@ Return the hostname of the database to use
 {{- define "umami.database.hostname" -}}
   {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" (include "postgresql.v1.primary.fullname" .Subcharts.postgresql) -}}
-  {{- else if .Values.mysql.enabled -}}
-    {{- printf "%s" (include "mysql.primary.fullname" .Subcharts.mysql) -}}
   {{- else -}}
+    {{- if not .Values.externalDatabase.hostname -}}
+      {{- fail "externalDatabase.hostname is required when postgresql.enabled is false" -}}
+    {{- end -}}
     {{- printf "%s" (tpl .Values.externalDatabase.hostname $) -}}
   {{- end -}}
 {{- end -}}
@@ -83,8 +84,6 @@ Return database service port
 {{- define "umami.database.port" -}}
   {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" (include "postgresql.v1.service.port" .Subcharts.postgresql) -}}
-  {{- else if .Values.mysql.enabled -}}
-    {{- printf "%s" (tpl (toString .Values.mysql.primary.service.ports.mysql) $) -}}
   {{- else -}}
     {{- printf "%s" (tpl (toString .Values.externalDatabase.port) $) -}}
   {{- end -}}
@@ -96,8 +95,6 @@ Return the name for the database to use
 {{- define "umami.database.database" -}}
   {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" (include "postgresql.v1.database" .Subcharts.postgresql) -}}
-  {{- else if .Values.mysql.enabled -}}
-    {{- printf "%s" (tpl .Values.mysql.auth.database $) -}}
   {{- else -}}
     {{- printf "%s" (tpl .Values.externalDatabase.auth.database $) -}}
   {{- end -}}
@@ -109,8 +106,6 @@ Return the name for the user to use
 {{- define "umami.database.username" -}}
   {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" (include "postgresql.v1.username" .Subcharts.postgresql) -}}
-  {{- else if .Values.mysql.enabled -}}
-    {{- printf "%s" (tpl .Values.mysql.auth.username $) -}}
   {{- else -}}
     {{- printf "%s" (tpl .Values.externalDatabase.auth.username $) -}}
   {{- end -}}
@@ -122,8 +117,6 @@ Get the password for the database
 {{- define "umami.database.password" -}}
   {{- if .Values.postgresql.enabled -}}
     {{- printf "%s" (tpl .Values.postgresql.auth.password $) -}}
-  {{- else if .Values.mysql.enabled -}}
-    {{- printf "%s" (tpl .Values.mysql.auth.password $) -}}
   {{- else if .Values.externalDatabase.auth.password -}}
     {{- printf "%s" (tpl .Values.externalDatabase.auth.password $) -}}
   {{- end -}}
@@ -135,9 +128,10 @@ Get the type of the external database
 {{- define "umami.database.type" -}}
   {{- if .Values.postgresql.enabled -}}
     {{- "postgresql" -}}
-  {{- else if .Values.mysql.enabled -}}
-    {{- "mysql" -}}
   {{- else if .Values.externalDatabase.type -}}
+    {{- if eq .Values.externalDatabase.type "mysql" -}}
+      {{- fail "MySQL is not supported in Umami v3. Please use PostgreSQL. See https://docs.umami.is/docs/guides/migrate-mysql-postgresql" -}}
+    {{- end -}}
     {{- printf "%s" (tpl .Values.externalDatabase.type $) -}}
   {{- end -}}
 {{- end -}}

@@ -24,3 +24,33 @@
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
+
+{{- if not .Values.postgresql.enabled }}
+================================================================================
+WARNING: Umami v3 requires PostgreSQL
+================================================================================
+
+Umami v3 only supports PostgreSQL databases. If you are using an external
+database, ensure it is PostgreSQL.
+
+If you are upgrading from Umami v2 with MySQL, you must migrate your data
+to PostgreSQL before upgrading. See the migration guide:
+https://docs.umami.is/docs/guides/migrate-mysql-postgresql
+
+{{- end }}
+
+{{- if .Values.mysql.enabled }}
+================================================================================
+ERROR: MySQL is no longer supported
+================================================================================
+
+Umami v3 removed MySQL support. The mysql.enabled setting will have no effect.
+
+You must:
+1. Migrate your MySQL data to PostgreSQL
+2. Set postgresql.enabled=true
+3. Set mysql.enabled=false
+
+Migration guide: https://docs.umami.is/docs/guides/migrate-mysql-postgresql
+
+{{- end }}
