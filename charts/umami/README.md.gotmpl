@@ -15,6 +15,27 @@ Umami is a simple, fast, privacy-focused alternative to Google Analytics.
 
 This chart bootstraps [Umami](https://github.com/umami-software/umami) on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
+## ⚠️ Important: Umami v3 Breaking Changes
+
+**Umami v3 (chart version 8.0.0+) only supports PostgreSQL.** MySQL support has been completely removed.
+
+If you are upgrading from chart version 7.x (Umami v2) with MySQL:
+
+1. **You must migrate your data to PostgreSQL before upgrading**
+2. Follow the [MySQL to PostgreSQL Migration Guide](https://docs.umami.is/docs/guides/migrate-mysql-postgresql)
+3. Update your values to use PostgreSQL instead of MySQL
+
+Database migrations from v2 to v3 schema run automatically on the first startup.
+
+**What's New in Umami v3:**
+- Redesigned user interface
+- Universal filters with shareable URLs
+- Segments and cohorts for user tracking
+- Links and pixels for external tracking
+- Dedicated admin dashboard
+
+For more details, see the [Umami v3 announcement](https://umami.is/blog/umami-v3).
+
 ## Prerequisites
 
 - Kubernetes 1.19+
@@ -43,6 +64,8 @@ helm uninstall my-release
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
+> **Note:** As of chart version 8.0.0 (Umami v3), MySQL is no longer supported. The `mysql.*` values are kept for backwards compatibility but have no effect.
+
 {{ template "chart.valuesSection" . }}
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
@@ -54,6 +77,51 @@ helm install my-release -f values.yaml christianhuth/umami
 ```
 
 ## Upgrading the Chart
+
+### To 8.0.0
+
+**BREAKING CHANGE**: This major version upgrades Umami from v2.20.1 to v3.0.3 and removes MySQL support entirely.
+
+**Prerequisites:**
+- If using MySQL, you **must** migrate to PostgreSQL before upgrading
+- Follow the [MySQL to PostgreSQL Migration Guide](https://docs.umami.is/docs/guides/migrate-mysql-postgresql)
+- Ensure you are on the latest v2 version (chart 7.3.0) before migrating
+
+**Changes:**
+- Umami upgraded from v2.20.1 to v3.0.3
+- MySQL subchart removed (no longer supported)
+- `mysql.*` values are deprecated and have no effect
+- PostgreSQL is now the only supported database backend
+- Database migrations from v2 to v3 run automatically on first startup
+
+**Migration steps:**
+
+1. **Backup your database** (critical!)
+   ```bash
+   # PostgreSQL users
+   pg_dump -h <host> -U <user> <database> > umami_v2_backup.sql
+   ```
+
+2. **If on MySQL, migrate to PostgreSQL first** (before upgrading the chart)
+   - Follow: https://docs.umami.is/docs/guides/migrate-mysql-postgresql
+   - Update your values.yaml to use PostgreSQL
+
+3. **Upgrade the chart**
+   ```bash
+   helm repo update
+   helm upgrade my-release christianhuth/umami --version 8.0.0
+   ```
+
+4. **Verify the upgrade**
+   - Check pod logs for successful v2→v3 migration
+   - Test login and data access
+   - Verify all analytics data is present
+
+**Rollback:**
+If you need to rollback, restore your v2 database backup and downgrade:
+```bash
+helm rollback my-release
+```
 
 ### To 7.0.0
 

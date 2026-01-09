@@ -12,7 +12,7 @@ image:
   # -- image pull policy
   pullPolicy: Always
   # -- Overrides the image tag
-  tag: "postgresql-v2.20.1"
+  tag: "v3.0.3"
 
 # -- If defined, uses a Secret to pull an image from a private Docker registry or repository.
 imagePullSecrets: []
@@ -163,6 +163,10 @@ extraEnv: []
 # -- define additional init containers
 initContainers: {}
 
+# Umami v3 Configuration
+# NOTE: Umami v3 only supports PostgreSQL. If upgrading from v2 with MySQL,
+# you must migrate to PostgreSQL first: https://docs.umami.is/docs/guides/migrate-mysql-postgresql
+# Database migrations from v2 to v3 run automatically on first startup.
 umami:
   appSecret:
     # -- Name of an existing secret containing the app secret under the key app-secret.
@@ -231,14 +235,12 @@ postgresql:
     username: mychart
 
 mysql:
-  # -- enable MySQL™ subchart from Bitnami
+  # -- DEPRECATED: MySQL is no longer supported in Umami v3. This section is kept for backwards compatibility but will have no effect. Use PostgreSQL instead.
+  # @ignored
   enabled: false
   auth:
-    # -- Name for a custom database to create
     database: mychart
-    # -- Password for the custom user to create
     password: mychart
-    # -- Name for a custom user to create
     username: mychart
 
 externalDatabase:
@@ -253,11 +255,11 @@ externalDatabase:
   hostname: ""
   # -- Port used to connect to database
   port: 5432
-  # -- Type of database
+  # -- Type of database (only postgresql supported in Umami v3)
   type: postgresql
 
 database:
   # -- Key in the existing secret containing the database url
   databaseUrlKey: ""
-  # -- use an existing secret containing the database url. If none given, we will generate the database url by using the other values. The password for the database has to be set using `.Values.postgresql.auth.password`, `.Values.mysql.auth.password` or `.Values.externalDatabase.auth.password`.
+  # -- use an existing secret containing the database url. If none given, we will generate the database url by using the other values. The password for the database has to be set using `.Values.postgresql.auth.password` or `.Values.externalDatabase.auth.password`.
   existingSecret: ""

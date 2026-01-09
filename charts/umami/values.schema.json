@@ -60,7 +60,7 @@
         },
         "existingSecret": {
           "default": "",
-          "description": "use an existing secret containing the database url. If none given, we will generate the database url by using the other values. The password for the database has to be set using `.Values.postgresql.auth.password`, `.Values.mysql.auth.password` or `.Values.externalDatabase.auth.password`.",
+          "description": "use an existing secret containing the database url. If none given, we will generate the database url by using the other values. The password for the database has to be set using `.Values.postgresql.auth.password` or `.Values.externalDatabase.auth.password`.",
           "title": "existingSecret",
           "type": "string"
         }
@@ -117,9 +117,10 @@
         },
         "type": {
           "default": "postgresql",
-          "description": "Type of database",
+          "description": "Type of database (only postgresql supported in Umami v3)",
           "title": "type",
-          "type": "string"
+          "type": "string",
+          "enum": ["postgresql"]
         }
       },
       "required": [
@@ -172,7 +173,7 @@
           "type": "string"
         },
         "tag": {
-          "default": "postgresql-v2.20.1",
+          "default": "v3.0.3",
           "description": "Overrides the image tag",
           "title": "tag",
           "type": "string"
@@ -325,7 +326,8 @@
         },
         "enabled": {
           "default": false,
-          "description": "enable MySQL™ subchart from Bitnami",
+          "deprecated": true,
+          "description": "DEPRECATED: MySQL is no longer supported in Umami v3. This setting has no effect. Use postgresql.enabled instead.",
           "title": "enabled",
           "type": "boolean"
         }

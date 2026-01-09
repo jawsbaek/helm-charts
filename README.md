@@ -1,7 +1,6 @@
 # Kubernetes Helm Charts
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/christianhuth)](https://artifacthub.io/packages/search?repo=christianhuth)
 
 These charts are provided as-is with no warranties.
 
@@ -12,11 +11,11 @@ These charts are provided as-is with no warranties.
 Once Helm is set up properly, add the repo as follows:
 
 ```shell
-helm repo add christianhuth https://charts.christianhuth.de
+helm repo add jawsbaek https://jawsbaek.github.io/helm-charts
 helm repo update
 ```
 
-You can then run `helm search repo christianhuth` to see the current list of available charts.
+You can then run `helm search repo jawsbaek` to see the current list of available charts.
 
 ## License
 

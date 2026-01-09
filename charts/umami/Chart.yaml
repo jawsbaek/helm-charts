@@ -1,32 +1,12 @@
----
-apiVersion: v2
-name: umami
-description: Umami is a simple, fast, privacy-focused alternative to Google Analytics.
-type: application
-version: 7.3.0
-appVersion: "v2.20.1"
-home: https://github.com/christianhuth/helm-charts
-icon: https://raw.githubusercontent.com/christianhuth/helm-charts/refs/heads/main/charts/umami/icon.svg
-maintainers:
-  - name: christianhuth
-    email: christian@knell.it
-sources:
-  - https://github.com/umami-software/umami
-  - https://umami.is/
-dependencies:
-  - name: postgresql
-    repository: oci://registry-1.docker.io/bitnamicharts
-    version: 18.2.0
-    condition: postgresql.enabled
-  - name: mysql
-    repository: oci://registry-1.docker.io/bitnamicharts
-    version: 14.0.3
-    condition: mysql.enabled
 annotations:
   artifacthub.io/category: monitoring-logging
   artifacthub.io/changes: |
-    - kind: added
-      description: support for Gateway API routes
+    - kind: changed
+      description: "BREAKING: Upgraded to Umami v3.0.3 - MySQL support removed, PostgreSQL only"
+    - kind: removed
+      description: "Removed MySQL subchart dependency - Umami v3 requires PostgreSQL"
+    - kind: changed
+      description: "Updated default image tag to v3.0.3"
   artifacthub.io/links: |
     - name: support
       url: https://github.com/christianhuth/helm-charts/issues
@@ -54,3 +34,22 @@ annotations:
   artifacthub.io/signKey: |
     fingerprint: EE24F8BB6D099E78FD704F83B5ECDBCDDD485D0E
     url: https://charts.christianhuth.de/public.key
+apiVersion: v2
+appVersion: v3.0.3
+dependencies:
+- condition: postgresql.enabled
+  name: postgresql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 18.2.0
+description: Umami is a simple, fast, privacy-focused alternative to Google Analytics.
+home: https://github.com/christianhuth/helm-charts
+icon: https://raw.githubusercontent.com/christianhuth/helm-charts/refs/heads/main/charts/umami/icon.svg
+maintainers:
+- email: christian@knell.it
+  name: christianhuth
+name: umami
+sources:
+- https://github.com/umami-software/umami
+- https://umami.is/
+type: application
+version: 8.0.0
