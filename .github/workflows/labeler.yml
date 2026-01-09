@@ -3,11 +3,20 @@ name: "Label Pull Requests"
 # Note: pull_request_target is used instead of pull_request to allow labeling
 # PRs from forks. This is safe because we only checkout the base branch
 # (target of the PR) and do not execute any untrusted code from the PR.
+#
+# Security measures implemented per zizmor recommendations:
+# 1. Branch filter: Only runs for PRs targeting main branch
+# 2. Repository check: Only runs in the main repository, not in forks
+# 3. Base branch checkout: Only checks out the target branch, not PR code
 on:
-  - pull_request_target
+  pull_request_target:
+    branches:
+      - main
 
 jobs:
   label:
+    # Only run for the main repository, not in forks
+    if: github.repository == 'jawsbaek/helm-charts'
     permissions:
       contents: read
       pull-requests: write
