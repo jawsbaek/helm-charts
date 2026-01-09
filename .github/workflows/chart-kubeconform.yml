@@ -4,10 +4,15 @@ on:
   workflow_call:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
 
   detect-changed-charts:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     outputs:
       matrix: ${{ steps.get-changed-charts.outputs.matrix }}
     steps:
@@ -37,11 +42,15 @@ jobs:
           echo "matrix=$CHANGED_CHARTS" >> $GITHUB_OUTPUT
 
       - name: Debug matrix ouput
-        run: echo "${{ steps.get-changed-charts.outputs.matrix }}"
+        env:
+          MATRIX: ${{ steps.get-changed-charts.outputs.matrix }}
+        run: echo "$MATRIX"
 
   kubeconform:
     needs: detect-changed-charts
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     if: ${{ needs.detect-changed-charts.outputs.matrix != '[]' }}
     strategy:
       fail-fast: false
