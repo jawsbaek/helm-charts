@@ -3,3 +3,11 @@ rules:
     config:
       policies:
         "*": ref-pin
+
+  # Ignore artipacked (credential persistence) warnings for Claude Code workflows
+  # These workflows require credentials to interact with GitHub (post comments, etc.)
+  # and do not upload artifacts, so the risk is mitigated
+  artipacked:
+    ignore:
+      - claude-code-review.yml
+      - claude.yml
