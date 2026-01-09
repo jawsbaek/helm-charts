@@ -1,5 +1,8 @@
 name: "Label Pull Requests"
 
+# Note: pull_request_target is used instead of pull_request to allow labeling
+# PRs from forks. This is safe because we only checkout the base branch
+# (target of the PR) and do not execute any untrusted code from the PR.
 on:
   - pull_request_target
 
@@ -10,6 +13,11 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      # Checkout base branch only to access labeler configuration
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          persist-credentials: false
       - uses: actions/labeler@v6
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
