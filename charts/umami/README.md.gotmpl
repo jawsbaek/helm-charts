@@ -40,6 +40,40 @@ For more details, see the [Umami v3 announcement](https://umami.is/blog/umami-v3
 
 - Kubernetes 1.19+
 
+## Istio Service Mesh Compatibility
+
+When deploying Umami with Istio sidecar injection, there are important configuration considerations:
+
+### HTTPS/TLS Configuration
+
+In an Istio environment, TLS is typically handled at the sidecar level (mTLS between sidecars). You should:
+
+1. **Disable Umami's internal HTTPS redirect:**
+   ```yaml
+   umami:
+     forceSSL: "0"
+   ```
+
+2. **Set the appProtocol for proper traffic routing:**
+   ```yaml
+   service:
+     appProtocol: http
+   ```
+
+   This explicitly tells Istio that the service communicates via HTTP, preventing protocol detection issues.
+
+### Example Istio-compatible values
+
+```yaml
+umami:
+  forceSSL: "0"
+
+service:
+  appProtocol: http
+```
+
+TLS termination should be handled by the Istio Gateway or Ingress Gateway, not by Umami itself.
+
 ## Installing the Chart
 
 To install the chart with the release name `my-release`:
