@@ -66,6 +66,10 @@ service:
   type: ClusterIP
   # -- Kubernetes port where service is exposed
   port: 3000
+  # -- The application protocol. Useful for Istio sidecar injection to explicitly declare the protocol.
+  # Set to "http" for Istio environments.
+  # @default -- "" (empty, no appProtocol set)
+  appProtocol: ""
 
 ingress:
   # -- Enable ingress record generation
